@@ -18,10 +18,12 @@
 
 (define-generic-mode 'treetop-mode-base
   '("#")
-  '("end" "include" "grammar" "require" "rule")
+  '("end" "include" "grammar" "module" "require" "rule")
   '(("\\(<[A-Za-z0-9_]+>\\)" 1 'font-lock-variable-name-face)
     ("rule\\s-+\\([A-Za-z_][A-Za-z0-9_]*\\)\\s-*$" 1 'font-lock-function-name-face) 
     ("grammar\\s-+\\([A-Za-z_][A-Za-z0-9_]*\\)\\s-*$" 1 'font-lock-type-face)
+    ("include\\s-+\\([A-Za-z_][A-Za-z0-9_]*\\)\\s-*$" 1 'font-lock-type-face)
+    ("module\\s-+\\([A-Za-z_][A-Za-z0-9_]*\\)\\s-*$" 1 'font-lock-type-face)
     ("[^\\]'[^']*[^\\]'" . 'font-lock-string-face))
   nil
   nil
@@ -30,36 +32,41 @@
 (defun blank    () (looking-at "$"))
 (defun end      () (looking-at "end[^A-Za-z0-9_]"))
 (defun grammar  () (looking-at "grammar[^A-Za-z0-9_]"))
+(defun module   () (looking-at "module[^A-Za-z0-9_]"))
 (defun nonblank () (looking-at "[^:space:]"))
 (defun rule     () (looking-at "rule[^A-Za-z0-9_]"))
 
-(defun set-indent (offset-end offset-rule offset-grammar)
+(defun set-indent (p0 xend xmodule xrule xgrammar)
   (let ((x -1))
     (save-excursion
       (while (= x -1)
         (forward-line -1)
         (skip-chars-forward "[:space:]")
-        (let ((c (current-indentation)))
-          (setq x (+ c (cond
-                        ((end) offset-end)
-                        ((rule) offset-rule)
-                        ((grammar) offset-grammar)
-                        ((bobp) (- c))
-                        (t (- (+ c 1)))))))))
+        (let ((c (current-indentation)) (p1 (point)))
+          (setq x (if (= p0 p1)
+                      0
+                    (+ c (cond
+                          ((end) xend)
+                          ((rule) xrule)
+                          ((grammar) xgrammar)
+                          ((module) xmodule)
+                          ((bobp) (- c))
+                          (t (- (+ c 1))))))))))
     x))
 
 (defun treetop-indent-line ()
   "Indent current line of Treetop grammar"
   (beginning-of-line)
   (skip-chars-forward "[:space:]")
-  (indent-line-to
-   (cond
-    ((blank) 0)
-    ((rule)     (set-indent (+ 0) (+ 0) (+ w)))
-    ((end)      (set-indent (- w) (+ 0) (+ 0)))
-    ((grammar)  (set-indent (+ 0) (+ 0) (+ 0)))
-    ((nonblank) (set-indent (+ 0) (+ w) (+ w)))
-    )))
+  (let ((p0 (point)))
+    (indent-line-to
+     (cond
+      ((blank) 0)
+      ((rule)     (set-indent p0 (+ 0) (+ w) (+ 0) (+ w)))
+      ((end)      (set-indent p0 (- w) (- w) (+ 0) (+ 0)))
+      ((grammar)  (set-indent p0 (+ 0) (+ w) (+ 0) (+ 0)))
+      ((module)   (set-indent p0 (+ 0) (+ w) (+ 0) (+ 0)))
+      ((nonblank) (set-indent p0 (+ 0) (+ w) (+ w) (+ w)))))))
 
 (define-derived-mode treetop-mode treetop-mode-base "Treetop"
   "A major mode for Treetop grammar files"
