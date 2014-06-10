@@ -10,8 +10,3 @@ Place `treetop-mode.el` on Emacs' load-path, or update your `.emacs` with e.g. `
 ### Thanks
 
 Thanks to the authors of the [EmacsWiki](http://www.emacswiki.org) pages [here](http://emacswiki.org/emacs/ModeTutorial) and [here](http://www.emacswiki.org/emacs/DerivedMode), and to the folks behind [Treetop](http://treetop.rubyforge.org).
-
-### License
-
-The contents of this repository are released under the [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) license. See the LICENSE file for details.
-
