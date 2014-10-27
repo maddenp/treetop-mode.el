@@ -11,4 +11,4 @@ Work is needed to correctly format blocks of Ruby code embedded in grammars.
 
 ### Thanks
 
-Thanks to the authors of the [EmacsWiki](http://www.emacswiki.org) pages [here](http://emacswiki.org/emacs/ModeTutorial) and [here](http://www.emacswiki.org/emacs/DerivedMode), and to the folks behind [Treetop](http://treetop.rubyforge.org).
+Thanks to the authors of the [EmacsWiki](http://www.emacswiki.org) pages [here](http://emacswiki.org/emacs/ModeTutorial) and [here](http://www.emacswiki.org/emacs/DerivedMode), and to the folks behind [Treetop](http://cjheath.github.io/treetop/).
